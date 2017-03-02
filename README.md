@@ -17,7 +17,7 @@ And an example of one way of using your own common components.
 # Using
 
 First time do "npm install".
-Then "npm run build".
+Then "npm run dist".
 In your dev dependencies or dependencies add "jms-react-components": "file:/[project location]/jms-react-components".
 
 Import {JButton} from 'jms-react-compoents';
