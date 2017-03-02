@@ -1,0 +1,48 @@
+{
+  "name": "jms-react-components",
+  "version": "4.0.4",
+  "description": "A collection of generic React UI components",
+  "main": "dist/Index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmarkstevens/jms-react-components"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "UI",
+    "library"
+  ],
+  "author": {
+    "name": "J Mark Stevens",
+    "email": "jmstevens@jmarkstevens.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jmarkstevens/jms-react-components/issues"
+  },
+  "scripts": {
+    "dist": "eslint src && babel src --out-dir dist"
+  },
+  "dependencies": {
+    "lodash": "latest",
+    "radium": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "screenfull": "latest"
+  },
+  "devDependencies": {
+    "babel-cli": "latest",
+    "babel-core": "latest",
+    "babel-eslint": "latest",
+    "babel-loader": "latest",
+    "babel-preset-es2015": "latest",
+    "babel-preset-react": "latest",
+    "babel-preset-stage-0": "latest",
+    "eslint": "latest",
+    "eslint-loader": "latest",
+    "eslint-plugin-babel": "latest",
+    "eslint-plugin-react": "latest",
+    "webpack": "latest"
+  }
+}
