@@ -1,6 +1,6 @@
 {
   "name": "jms-react-components",
-  "version": "4.0.4",
+  "version": "4.0.10",
   "description": "A collection of generic React UI components",
   "main": "dist/Index.js",
   "repository": {
