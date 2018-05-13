@@ -1,5 +1,6 @@
-const React = require('react');
-const Radium = require('radium');
+import PropTypes from 'prop-types';
+import React from 'react';
+import Radium from 'radium';
 
 const StyleConstants = {
   Colors: {
@@ -13,7 +14,7 @@ const StyleConstants = {
     LARGE: '24px',
     MEDIUM: 15,
     SMALL: 10,
-    XSMALL: 5
+    XSMALL: 5,
   },
 };
 
@@ -21,8 +22,8 @@ class SimpleSlider extends React.Component {
   state = {
     dragging: false,
     leftPixels: 0,
-    width: 0
-  }
+    width: 0,
+  };
 
   componentDidMount = () => {
     if (!this.rangeSelectorRef) return;
@@ -30,16 +31,16 @@ class SimpleSlider extends React.Component {
     const width = component.clientWidth;
     const leftPixels = this.props.percent * width;
 
-    this.setState({width, leftPixels});
-  }
+    this.setState({ width, leftPixels });
+  };
 
   componentWillReceiveProps = (newProps) => {
     if (this.props.percent !== newProps.percent) {
       const leftPixels = newProps.percent * this.state.width;
 
-      this.setState({leftPixels});
+      this.setState({ leftPixels });
     }
-  }
+  };
 
   _handleMouseEvents = (e) => {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -53,13 +54,21 @@ class SimpleSlider extends React.Component {
     }
 
     this.props.onPercentChange(this.props.formatter(currentPercent), this.props.itemName);
-  }
+  };
 
-  _handleDragStart = () => { this.setState({dragging: true}); }
+  _handleDragStart = () => {
+    this.setState({ dragging: true });
+  };
 
-  _handleDragging = (e) => { if (this.state.dragging) { this._handleMouseEvents(e); } }
+  _handleDragging = (e) => {
+    if (this.state.dragging) {
+      this._handleMouseEvents(e);
+    }
+  };
 
-  _handleDragEnd = () => { this.setState({dragging: false}); }
+  _handleDragEnd = () => {
+    this.setState({ dragging: false });
+  };
 
   styles = () => {
     let cursorStyle = 'grab';
@@ -71,71 +80,75 @@ class SimpleSlider extends React.Component {
       cursorStyle = 'grabbing';
     }
 
-    return Object.assign({}, {
-      component: {
-        fontFamily: StyleConstants.FontFamily,
-        fontSize: '.8em',
-        fontWeight: '700',
-        position: 'relative'
+    return Object.assign(
+      {},
+      {
+        component: {
+          fontFamily: StyleConstants.FontFamily,
+          fontSize: '.8em',
+          fontWeight: '700',
+          position: 'relative',
+        },
+        range: {
+          margin: `0 ${StyleConstants.Spacing.MEDIUM}px`,
+          padding: '0px 0',
+        },
+        track: {
+          background: StyleConstants.Colors.trackColor,
+          borderRadius: '3px',
+          height: '7px',
+          marginLeft: '-5px',
+        },
+        trackHolder: {
+          cursor: cursorStyle,
+          padding: `${StyleConstants.Spacing.MEDIUM}px 0`,
+        },
+        toggle: {
+          background: StyleConstants.Colors.selectedColor,
+          borderRadius: '100%',
+          boxShadow: StyleConstants.ShadowLow,
+          cursor: cursorStyle,
+          height: StyleConstants.Spacing.LARGE,
+          left: this.state.leftPixels,
+          position: 'absolute',
+          top: '50%',
+          transform: 'translate(20%, -50%)',
+          WebkitTransform: 'translate(20%, -50%)',
+          width: StyleConstants.Spacing.LARGE,
+          zIndex: 2,
+        },
+        toggleLabel: {
+          cursor: 'pointer',
+          display: 'block',
+          left: '0%',
+          marginTop: '5px',
+          minWidth: StyleConstants.Spacing.LARGE,
+          position: 'absolute',
+          textAlign: 'center',
+          top: '0%',
+          transform: 'translateX(-50%, -50%)',
+          WebkitTransform: 'translateX(-50%, -50%)',
+        },
+        selected: {
+          background: StyleConstants.Colors.selectedColor,
+          borderRadius: '3px',
+          left: StyleConstants.Spacing.SMALL,
+          height: '3px',
+          position: 'absolute',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          WebkitTransform: 'translateY(-50%)',
+          width: this.state.leftPixels,
+          zIndex: 1,
+        },
       },
-      range: {
-        margin: `0 ${StyleConstants.Spacing.MEDIUM}px`,
-        padding: '0px 0',
-      },
-      track: {
-        background: StyleConstants.Colors.trackColor,
-        borderRadius: '3px',
-        height: '7px',
-        marginLeft: '-5px'
-      },
-      trackHolder: {
-        cursor: cursorStyle,
-        padding: `${StyleConstants.Spacing.MEDIUM}px 0`,
-      },
-      toggle: {
-        background: StyleConstants.Colors.selectedColor,
-        borderRadius: '100%',
-        boxShadow: StyleConstants.ShadowLow,
-        cursor: cursorStyle,
-        height: StyleConstants.Spacing.LARGE,
-        left: this.state.leftPixels,
-        position: 'absolute',
-        top: '50%',
-        transform: 'translate(20%, -50%)',
-        WebkitTransform: 'translate(20%, -50%)',
-        width: StyleConstants.Spacing.LARGE,
-        zIndex: 2
-      },
-      toggleLabel: {
-        cursor: 'pointer',
-        display: 'block',
-        left: '0%',
-        marginTop: '5px',
-        minWidth: StyleConstants.Spacing.LARGE,
-        position: 'absolute',
-        textAlign: 'center',
-        top: '0%',
-        transform: 'translateX(-50%, -50%)',
-        WebkitTransform: 'translateX(-50%, -50%)',
-      },
-      selected: {
-        background: StyleConstants.Colors.selectedColor,
-        borderRadius: '3px',
-        left: StyleConstants.Spacing.SMALL,
-        height: '3px',
-        position: 'absolute',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        WebkitTransform: 'translateY(-50%)',
-        width: this.state.leftPixels,
-        zIndex: 1
-      }
-    }, this.props.styles);
-  }
+      this.props.styles,
+    );
+  };
 
   render() {
     const styles = this.styles();
-    const {disabled} = this.props;
+    const { disabled } = this.props;
 
     return (
       <div style={styles.component}>
@@ -145,24 +158,17 @@ class SimpleSlider extends React.Component {
           onMouseUp={disabled ? null : this._handleDragEnd}
           onTouchEnd={disabled ? null : this._handleDragEnd}
           onTouchMove={disabled ? null : this._handleDragging}
-          ref={ref => this.rangeSelectorRef = ref}
+          ref={(ref) => { this.rangeSelectorRef = ref; }}
           style={styles.range}
         >
-          <div
-            onMouseDown={disabled ? null : this._handleMouseEvents}
-            style={styles.trackHolder}
-          >
+          <div onMouseDown={disabled ? null : this._handleMouseEvents} style={styles.trackHolder}>
             <div style={styles.track} />
             <div style={styles.selected} />
           </div>
-          <div
-            onMouseDown={disabled ? null : this._handleDragStart}
-            onTouchStart={disabled ? null : this._handleDragStart}
-            style={styles.toggle}
-          >
-            <label className="mx-rangeselector-upper-toggle-label" style={styles.toggleLabel}>
+          <div onMouseDown={disabled ? null : this._handleDragStart} onTouchStart={disabled ? null : this._handleDragStart} style={styles.toggle}>
+            <span className="mx-rangeselector-upper-toggle-label" style={styles.toggleLabel}>
               {this.props.formatter(this.props.percent)}
-            </label>
+            </span>
           </div>
         </div>
       </div>
@@ -171,20 +177,20 @@ class SimpleSlider extends React.Component {
 }
 
 SimpleSlider.propTypes = {
-  disabled: React.PropTypes.bool,
-  formatter: React.PropTypes.func,
-  itemName: React.PropTypes.string,
-  onPercentChange: React.PropTypes.func.isRequired,
-  percent: React.PropTypes.number.isRequired,
-  selectedColor: React.PropTypes.string,
-  styles: React.PropTypes.object
+  disabled: PropTypes.bool,
+  formatter: PropTypes.func,
+  itemName: PropTypes.string,
+  onPercentChange: PropTypes.func.isRequired,
+  percent: PropTypes.number.isRequired,
+  styles: PropTypes.object,
 };
 
 SimpleSlider.defaultProps = {
   disabled: false,
-  formatter (value) { return value; },
+  formatter(value) {
+    return value;
+  },
   itemName: '',
-  selectedColor: StyleConstants.Colors.selectedColor
 };
 
 module.exports = Radium(SimpleSlider);

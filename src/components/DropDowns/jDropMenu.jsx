@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
-let DropdownSty = {position: 'relative'};
+const DropdownSty = { position: 'relative' };
 
-let DropdownControlSty = {
+const DropdownControlSty = {
   position: 'relative',
   overflow: 'hidden',
   background: 'transparent',
@@ -12,10 +13,10 @@ let DropdownControlSty = {
   padding: '5px 5px',
   textAlign: 'right',
   transition: 'all 200ms ease',
-  width: '100%'
+  width: '100%',
 };
 
-let DropdownMenuSty = {
+const DropdownMenuSty = {
   backgroundColor: '#261a3b',
   boxShadow: '0 1px 0 rgba(0, 0, 0, 0.06)',
   boxSizing: 'border-box',
@@ -28,58 +29,62 @@ let DropdownMenuSty = {
   position: 'absolute',
   right: '0px',
   top: '100%',
-  zIndex: '200'
+  zIndex: '200',
 };
 
-let DropdownSeperatorSty = {
+const DropdownSeperatorSty = {
   backgroundColor: '#000000',
   height: '3px',
   margin: '3px 0',
-  width: '100%'
+  width: '100%',
 };
 
-let DropdownOptionSty = {
+const DropdownOptionSty = {
   boxSizing: 'border-box',
   color: '#EEFFEE',
   cursor: 'pointer',
-  display: 'block'
+  display: 'block',
 };
 
 class JDropMenu extends React.Component {
-  state = {isOpen: false, selected: {}};
+  state = { isOpen: false };
   setValue = (e) => {
-    let selectedOption = this.props.options[parseInt(e.target.id)];
+    const selectedOption = this.props.options[parseInt(e.target.id, 10)];
     this.props.onChange(selectedOption);
-    this.setState({isOpen: false});
+    this.setState({ isOpen: false });
   };
   handleMouseDown = (event) => {
-    if (event.type == 'mousedown' && event.button !== 0) return;
+    if (event.type === 'mousedown' && event.button !== 0) return;
     event.stopPropagation();
     event.preventDefault();
-    this.setState({isOpen: !this.state.isOpen});
+    this.setState({ isOpen: !this.state.isOpen });
   };
   render() {
-    let items = this.props.options.map((option, index) => {
-      if (option.type == 'seperator') {
-        return (<div style={DropdownSeperatorSty} key={option.key} />);
-      } else {
-        return (
-          <div
-            id={index}
-            key={option.value}
-            style={DropdownOptionSty}
-            onClick={this.setValue}
-          >{option.label}</div>
-        );
+    const items = this.props.options.map((option, index) => {
+      if (option.type === 'seperator') {
+        return <div style={DropdownSeperatorSty} key={option.key} />;
       }
+      return (
+        <div
+          id={index}
+          key={option.value}
+          onClick={this.setValue}
+          onKeyPress={this.setValue}
+          role="button"
+          style={DropdownOptionSty}
+          tabIndex={0}
+        >
+          {option.label}
+        </div>
+      );
     });
 
-    let value = (<i className="fa fa-bars fa-lg" />);
-    let menu = this.state.isOpen ? <div style={DropdownMenuSty}>{items}</div> : null;
+    const value = <i className="fa fa-bars fa-lg" />;
+    const menu = this.state.isOpen ? <div style={DropdownMenuSty}>{items}</div> : null;
 
     return (
       <div style={DropdownSty}>
-        <div style={DropdownControlSty} onMouseDown={this.handleMouseDown} onTouchEnd={this.handleMouseDown}>
+        <div style={DropdownControlSty} onKeyPress={this.handleMouseDown} onMouseDown={this.handleMouseDown} onTouchEnd={this.handleMouseDown} role="button" tabIndex={0}>
           {value}
         </div>
         {menu}
@@ -89,8 +94,8 @@ class JDropMenu extends React.Component {
 }
 
 JDropMenu.propTypes = {
-  options: React.PropTypes.array.isRequired,
-  onChange: React.PropTypes.func.isRequired
+  options: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 module.exports = JDropMenu;

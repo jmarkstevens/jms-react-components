@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
-let DropdownSty = {display: 'inline-block', lineHeight: '18px', position: 'relative'};
+const DropdownSty = { display: 'inline-block', lineHeight: '18px', position: 'relative' };
 
-let DropdownControlSty = {
+const DropdownControlSty = {
   background: 'transparent',
   boxSizing: 'border-box',
   cursor: 'default',
@@ -11,10 +12,10 @@ let DropdownControlSty = {
   position: 'relative',
   textAlign: 'right',
   transition: 'all 200ms ease',
-  width: '100%'
+  width: '100%',
 };
 
-let DropdownMenuSty = {
+const DropdownMenuSty = {
   backgroundColor: '#FFF',
   boxShadow: '0 1px 0 rgba(0, 0, 0, 0.06)',
   boxSizing: 'border-box',
@@ -29,94 +30,101 @@ let DropdownMenuSty = {
   top: '100%',
   WebkitOverflowScrolling: 'touch',
   whiteSpace: 'nowrap',
-  zIndex: '200'
+  zIndex: '200',
 };
 
-let DropdownArrowSty = {
+const DropdownArrowSty = {
   borderColor: '#999 transparent transparent',
   borderStyle: 'solid',
   borderWidth: '5px 5px 0',
-  content: '\' \'',
+  content: "' '",
   display: 'block',
   height: '0px',
   marginTop: '-ceil(5)',
   position: 'absolute',
   right: '8px',
   top: '6px',
-  width: '0px'
+  width: '0px',
 };
 
-let DropdownSeperatorSty = {
+const DropdownSeperatorSty = {
   backgroundColor: '#000000',
   height: '3px',
   margin: '3px 0',
-  width: '100%'
+  width: '100%',
 };
 
-let DropdownOptionSty = {
+const DropdownOptionSty = {
   boxSizing: 'border-box',
   color: '#EEFFEE',
   cursor: 'pointer',
-  display: 'block'
+  display: 'block',
 };
 
-let placeSty = {
+const placeSty = {
   backgroundColor: 'transparent',
-  paddingRight: '20px'
+  paddingRight: '20px',
 };
 
 class JDropSelect extends React.Component {
-  state = {isOpen: false, selected: {label: 'Select...', value: ''}};
+  state = { isOpen: false, selected: { label: 'Select...', value: '' } };
   componentWillMount() {
-    this.setState({selected: this.props.defaultSelected || {label: 'Select...', value: ''}});
+    this.setState({ selected: this.props.defaultSelected || { label: 'Select...', value: '' } });
   }
   componentWillReceiveProps(newProps) {
     if (newProps.defaultSelected && newProps.defaultSelected !== this.state.selected) {
-      this.setState({selected: newProps.defaultSelected});
+      this.setState({ selected: newProps.defaultSelected });
     }
   }
   setValue = (e) => {
-    let selectedOption = this.props.options[parseInt(e.target.id)];
-    if ((selectedOption !== this.state.selected) && this.props.onChange) this.props.onChange(this.props.itemName, selectedOption);
-    this.setState({selected: selectedOption, isOpen: false});
+    const selectedOption = this.props.options[parseInt(e.target.id, 10)];
+    if (selectedOption !== this.state.selected && this.props.onChange) this.props.onChange(this.props.itemName, selectedOption);
+    this.setState({ selected: selectedOption, isOpen: false });
   };
   handleMouseDown = (event) => {
-    if (event.type == 'mousedown' && event.button !== 0) return;
+    if (event.type === 'mousedown' && event.button !== 0) return;
     event.stopPropagation();
     event.preventDefault();
-    this.setState({isOpen: !this.state.isOpen});
+    this.setState({ isOpen: !this.state.isOpen });
   };
   render() {
-    let items = this.props.options.map((option, index) => {
-      if (option.type == 'seperator') {
-        return (<div style={DropdownSeperatorSty} key={option.key} />);
-      } else {
-        let selected = Boolean(option.label == this.state.selected.label);
-        let labelSpanSty = {cursor: 'pointer'};
-        labelSpanSty.color = selected ? 'green' : 'black';
-        return (
-          <div
-            id={index}
-            key={option.value}
-            style={DropdownOptionSty}
-            onClick={this.setValue}
-          >
-            <span id={index} style={labelSpanSty}>{option.label}</span>
-          </div>
-        );
+    const items = this.props.options.map((option, index) => {
+      if (option.type === 'seperator') {
+        return <div style={DropdownSeperatorSty} key={option.key} />;
       }
+      const selected = Boolean(option.label === this.state.selected.label);
+      const labelSpanSty = { cursor: 'pointer' };
+      labelSpanSty.color = selected ? 'green' : 'black';
+      return (
+        <div
+          id={index}
+          key={option.value}
+          onClick={this.setValue}
+          onKeyPress={this.setValue}
+          role="button"
+          style={DropdownOptionSty}
+          tabIndex={0}
+        >
+          <span id={index} style={labelSpanSty}>
+            {option.label}
+          </span>
+        </div>
+      );
     });
 
-    let value = (<div style={placeSty}>{this.state.selected.label}</div>);
-    let menu = this.state.isOpen ? <div style={DropdownMenuSty}>{items}</div> : null;
+    const value = <div style={placeSty}>{this.state.selected.label}</div>;
+    const menu = this.state.isOpen ? <div style={DropdownMenuSty}>{items}</div> : null;
 
     return (
       <div id="DropdownSty" style={DropdownSty}>
         <div
           id="DropdownControlSty"
-          style={DropdownControlSty}
+          onKeyPress={this.handleMouseDown}
           onMouseDown={this.handleMouseDown}
           onTouchEnd={this.handleMouseDown}
+          role="button"
+          style={DropdownControlSty}
+          tabIndex={0}
         >
           {value}
           <span id="DropdownArrowSty" style={DropdownArrowSty} />
@@ -128,10 +136,10 @@ class JDropSelect extends React.Component {
 }
 
 JDropSelect.propTypes = {
-  options: React.PropTypes.array.isRequired,
-  defaultSelected: React.PropTypes.object.isRequired,
-  itemName: React.PropTypes.string.isRequired,
-  onChange: React.PropTypes.func.isRequired
+  options: PropTypes.array.isRequired,
+  defaultSelected: PropTypes.object.isRequired,
+  itemName: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 module.exports = JDropSelect;

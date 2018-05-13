@@ -1,9 +1,10 @@
-const React = require('react');
-const Radium = require('radium');
+import PropTypes from 'prop-types';
+import React from 'react';
+import Radium from 'radium';
 
 const Icon = require('./Icon');
 
-let DropdownArrowSty = {
+const DropdownArrowSty = {
   borderColor: '#999 transparent transparent',
   borderStyle: 'solid',
   borderWidth: '5px 5px 0',
@@ -18,6 +19,13 @@ let DropdownArrowSty = {
 };
 
 class MultiSelect extends React.Component {
+  static propTypes = {
+    currentValue: PropTypes.array,
+    onChange: PropTypes.func,
+    items: PropTypes.array,
+    itemName: PropTypes.string,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -28,27 +36,23 @@ class MultiSelect extends React.Component {
     };
   }
 
-  componentWillReceiveProps = nextProps => {
+  componentWillReceiveProps = (nextProps) => {
     if (nextProps.currentValue.length === 0 && this.props.currentValue.length > 0) {
-      this.setState({selectedItems: []});
+      this.setState({ selectedItems: [] });
     } else if (nextProps.currentValue.length > this.props.currentValue.length) {
-      let newValues = [];
+      const newValues = [];
       nextProps.currentValue.forEach((value) => {
-        let index = nextProps.items.findIndex((option) => option.value === value);
+        const index = nextProps.items.findIndex(option => option.value === value);
         if (index > -1) newValues.push(nextProps.items[index]);
       });
-      this.setState({selectedItems: newValues});
+      this.setState({ selectedItems: newValues });
     }
   };
 
-  _getFilteredItems = () => {
-    return this.props.items.filter(item => {
-      return this.state.selectedItems.indexOf(item) === -1 &&
-        item.label.toLowerCase().indexOf(this.state.searchString.toLowerCase()) > -1;
-    });
-  };
+  _getFilteredItems = () => this.props.items.filter(item => this.state.selectedItems.indexOf(item) === -1 && item.label.toLowerCase().indexOf(this.state.searchString.toLowerCase()) > -1);
 
   _handleBlur = () => {
+    // console.log('handleBlur');
     this.setState({
       highlightedValue: null,
       isOpen: false,
@@ -57,13 +61,14 @@ class MultiSelect extends React.Component {
   };
 
   _handleFocus = () => {
-    this.setState({isOpen: true});
+    // console.log('handleFocus');
+    this.setState({ isOpen: true });
 
     if (this.input) this.input.focus();
   };
 
   _handleItemMouseOver = () => {
-    this.setState({highlightedValue: null});
+    this.setState({ highlightedValue: null });
   };
 
   _handleSelectAll = () => {
@@ -86,11 +91,11 @@ class MultiSelect extends React.Component {
     });
   };
 
-  _handleItemSelect = e => {
-    //add to selectedItems
-    const selectedItems = this.state.selectedItems;
+  _handleItemSelect = (e) => {
+    // add to selectedItems
+    const { selectedItems } = this.state;
 
-    const getFilteredItemsIndex = parseInt(e.target.id);
+    const getFilteredItemsIndex = parseInt(e.target.id, 10);
     const item = this._getFilteredItems()[getFilteredItemsIndex];
 
     selectedItems.push(item);
@@ -106,16 +111,14 @@ class MultiSelect extends React.Component {
     if (this.input) this.input.focus();
   };
 
-  _handleItemRemove = e => {
-    const item = this.state.selectedItems[parseInt(e.target.id)];
+  _handleItemRemove = (e) => {
+    const item = this.state.selectedItems[parseInt(e.target.id, 10)];
 
-    const selectedItems = this.state.selectedItems.filter(selectedItem => {
-      return selectedItem !== item;
-    });
+    const selectedItems = this.state.selectedItems.filter(selectedItem => selectedItem !== item);
 
     this.props.onChange(this.props.itemName, selectedItems);
 
-    this.setState({selectedItems});
+    this.setState({ selectedItems });
 
     if (this.input) this.input.focus();
   };
@@ -127,16 +130,16 @@ class MultiSelect extends React.Component {
     const activeLi = ul.children[nextIndex + skipClearSelectAll];
 
     if (scrollDirection === 'up' && activeLi) {
-      const heightFromTop = (nextIndex + skipClearSelectAll) * activeLi.clientHeight + activeLi.clientHeight;
+      const heightFromTop = (nextIndex + skipClearSelectAll) * (activeLi.clientHeight + activeLi.clientHeight);
 
       if (heightFromTop > ul.clientHeight || nextIndex === 0) {
-        ul.scrollTop = activeLi.offsetTop - activeLi.clientHeight * skipClearSelectAll;
+        ul.scrollTop = (activeLi.offsetTop - activeLi.clientHeight) * skipClearSelectAll;
       }
     } else if (scrollDirection === 'down' && activeLi) {
       const heightFromBottom = (filteredItems.length - nextIndex) * activeLi.clientHeight;
 
       if (heightFromBottom > ul.clientHeight) {
-        ul.scrollTop = activeLi.offsetTop - activeLi.clientHeight * skipClearSelectAll;
+        ul.scrollTop = (activeLi.offsetTop - activeLi.clientHeight) * skipClearSelectAll;
       }
 
       if (nextIndex === filteredItems.length - 1) {
@@ -153,34 +156,29 @@ class MultiSelect extends React.Component {
     });
   };
 
-  _handleInputChange = e => {
-    this.setState({searchString: e.target.value});
+  _handleInputChange = (e) => {
+    this.setState({ searchString: e.target.value });
   };
 
-  _renderSelectedItems = () => {
-    return this.state.selectedItems.map((item, index) => {
-      return (
-        <div className="mx-MultiSelect-selected" key={index} style={styles.itemTag}>
-          {item.label}
-          <Icon
-            elementProps={{id: index, onClick: this._handleItemRemove}}
-            size={15}
-            style={styles.removeIcon}
-            type="close"
-          />
-        </div>
-      );
-    });
-  };
+  _renderSelectedItems = () =>
+    this.state.selectedItems.map((item, index) => (
+      <div className="mx-MultiSelect-selected" key={item.label} style={styles.itemTag}>
+        {item.label}
+        <Icon elementProps={{ id: index, onClick: this._handleItemRemove }} size={15} style={styles.removeIcon} type="close" />
+      </div>
+    ));
 
   _renderItemList = () => {
     const selectAll = (
       <div
         className="mx-MultiSelect-select-all"
         key="selectAllItem"
+        onFocus={ () => 1 }
         onMouseDown={this._handleSelectAll}
         onMouseOver={this._handleItemMouseOver}
+        role="button"
         style={styles.item}
+        tabIndex={0}
       >
         Select All
       </div>
@@ -189,42 +187,49 @@ class MultiSelect extends React.Component {
       <div
         className="mx-MultiSelect-clear-all"
         key="clearAllItem"
+        onFocus={ () => 1 }
         onMouseDown={this._handleClearAll}
         onMouseOver={this._handleItemMouseOver}
+        role="button"
         style={styles.item}
+        tabIndex={0}
       >
         Clear
       </div>
     );
-    let showSelectAll = (this.props.useSelectAll && (this.state.selectedItems.length !== this.props.items.length));
+    const showSelectAll = this.props.useSelectAll && this.state.selectedItems.length !== this.props.items.length;
     return (
-      <div className="mx-MultiSelect-option-list" ref={ref => this.optionList = ref} style={styles.itemList}>
+      <div className="mx-MultiSelect-option-list" ref={(ref) => { this.optionList = ref; } } style={styles.itemList}>
         {showSelectAll ? selectAll : null}
 
-        {this._getFilteredItems().map((item, index) => {
-          return (
-            <div
-              className="mx-MultiSelect-option FlexBox FlexJustify"
-              key={index}
-              id={index}
-              onMouseDown={this._handleItemSelect}
-              onMouseOver={this._handleItemMouseOver}
-              style={[styles.item, item === this.state.highlightedValue && styles.activeItem]}
-            >
-              <span id={index}>{item.label}</span>
-              <span id={index}>{item.count}</span>
-            </div>
-          );
-        })}
+        {this._getFilteredItems().map((item, index) => (
+          <div
+            className="mx-MultiSelect-option FlexBox FlexJustify"
+            key={item.label}
+            id={index}
+            onFocus={ this._handleFocus }
+            onMouseDown={this._handleItemSelect}
+            onMouseOver={this._handleItemMouseOver}
+            role="button"
+            style={[styles.item, item === this.state.highlightedValue && styles.activeItem]}
+            tabIndex={0}
+          >
+            <span id={index}>{item.label}</span>
+            <span id={index}>{item.count}</span>
+          </div>
+        ))}
 
         {this.state.selectedItems.length > 0 ? clear : null}
 
         <div
           className="mx-MultiSelect-close"
           key="close"
+          onFocus={ this._handleFocus }
           onMouseDown={this._handleClose}
           onMouseOver={this._handleItemMouseOver}
+          role="button"
           style={[styles.item, styles.close]}
+          tabIndex={0}
         >
           <span>Close</span>
         </div>
@@ -236,17 +241,15 @@ class MultiSelect extends React.Component {
     return (
       <div
         className="mx-MultiSelect"
-        onBlur={this._handleBlur}
         onFocus={this._handleFocus}
+        onMouseDown={this._handleBlur}
+        role="button"
         style={[styles.component, this.props.style]}
-        tabIndex="0"
+        tabIndex={0}
       >
         {this._renderSelectedItems()}
 
-        <div
-          className="mx-MultiSelect-option-list-container"
-          style={[styles.itemListContainer, !this.state.isOpen && {display: 'none'}]}
-        >
+        <div className="mx-MultiSelect-option-list-container" style={[styles.itemListContainer, !this.state.isOpen && { display: 'none' }]}>
           {this._renderItemList()}
         </div>
         <span id="DropdownArrowSty" style={DropdownArrowSty} />
@@ -256,21 +259,14 @@ class MultiSelect extends React.Component {
 }
 
 MultiSelect.propTypes = {
-  items: React.PropTypes.array,
-  onItemRemove: React.PropTypes.func,
-  onItemSelect: React.PropTypes.func,
-  placeholderText: React.PropTypes.string,
-  preSelectedItems: React.PropTypes.array,
-  useSelectAll: React.PropTypes.bool,
+  items: PropTypes.array,
+  style: PropTypes.object,
+  preSelectedItems: PropTypes.array,
+  useSelectAll: PropTypes.bool,
 };
 
 MultiSelect.defaultProps = {
   items: [],
-  onItemRemove() {
-  },
-  onItemSelect() {
-  },
-  placeholderText: 'Select Filters',
   preSelectedItems: [],
   useSelectAll: false,
 };
@@ -364,5 +360,9 @@ const styles = {
     cursor: 'pointer',
   },
 };
+
+/* eslint-disable */
+// MultiSelect = Radium(MultiSelect);
+/* eslint-enable */
 
 module.exports = Radium(MultiSelect);

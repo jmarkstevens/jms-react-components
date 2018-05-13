@@ -1,26 +1,37 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 let listSty = {};
-let listStyleDefault = {};
+const listStyleDefault = {};
 
 let lineSty = {};
-let lineStyleDefault = {
+const lineStyleDefault = {
   color: '#a7b3a5',
-  marginLeft: '7px'
+  marginLeft: '7px',
 };
 
-function divMap(item, index) {
-  return (<div style={lineSty} key={index}>{item}</div>);
-}
+const divMap = (item, index) => (
+  <div style={lineSty} key={index}>
+    {item}
+  </div>
+);
 
-function spanMap(item, index) {
-  return (<span style={lineSty} key={index}>{item}</span>);
-}
+const spanMap = (item, index) => (
+  <span style={lineSty} key={index}>
+    {item}
+  </span>
+);
 
-function JList({data, lineStyle, listStyle, spanLine}) {
-  listSty = listStyle ? listStyle : listStyleDefault;
-  lineSty = lineStyle ? lineStyle : lineStyleDefault;
-  var list;
+const JList = (props) => {
+  const {
+    data,
+    lineStyle,
+    listStyle,
+    spanLine,
+  } = props;
+  listSty = listStyle || listStyleDefault;
+  lineSty = lineStyle || lineStyleDefault;
+  let list;
   if (spanLine) list = data.map(spanMap);
   else list = data.map(divMap);
   return (
@@ -28,6 +39,13 @@ function JList({data, lineStyle, listStyle, spanLine}) {
       {list}
     </div>
   );
-}
+};
+
+JList.propTypes = {
+  data: PropTypes.array,
+  lineStyle: PropTypes.object,
+  listStyle: PropTypes.object,
+  spanLine: PropTypes.string,
+};
 
 module.exports = JList;

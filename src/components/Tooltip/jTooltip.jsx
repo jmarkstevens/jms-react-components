@@ -1,13 +1,14 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
-let TooltipSty = {
+const TooltipSty = {
   display: 'inline-block',
   lineHeight: '14px',
   marginRight: '5px',
-  verticalAlign: 'top'
+  verticalAlign: 'top',
 };
 
-let helpTip = {
+const helpTip = {
   background: '#5a5e5e',
   border: '1px solid #a3aaaa',
   borderRadius: '50%',
@@ -20,10 +21,10 @@ let helpTip = {
   lineHeight: '14px',
   marginTop: '1px',
   textAlign: 'center',
-  width: '14px'
+  width: '14px',
 };
 
-let contentSty = {
+const contentSty = {
   background: 'rgb(28, 34, 24)',
   border: '1px solid rgba(0, 0, 0, 0.08)',
   borderRadius: '3px',
@@ -36,30 +37,45 @@ let contentSty = {
   padding: '5px',
   textAlign: 'left',
   wordWrap: 'break-word',
-  zIndex: '200'
+  zIndex: '200',
 };
 
-let contentOuterSty = {height: '100%', width: '100%'};
+const contentOuterSty = { height: '100%', width: '100%' };
 
-function Contents({tooltipActive, place, position, data}) {
+const Contents = (props) => {
+  const {
+    tooltipActive,
+    place,
+    position,
+    data,
+  } = props;
   if (!data) return null;
-  let contentHtml = data;
-  let contentLength = contentHtml.length;
-  let topNeg = (Math.ceil(contentLength/40) + 1) * 18;
-  let rightNeg = contentLength * .25;
+  const contentHtml = data;
+  const contentLength = contentHtml.length;
+  const topNeg = (Math.ceil(contentLength / 40) + 1) * 18;
+  const rightNeg = contentLength * 0.25;
 
-  let active = tooltipActive;
-  let inPosition = position || null;
-  let contentInnerSty = {position: 'absolute'};
+  const active = tooltipActive;
+  const inPosition = position || null;
+  const contentInnerSty = { position: 'absolute' };
   if (active) {
     switch (place) {
-      case 'bottom': contentInnerSty.left = inPosition.right + 5; contentInnerSty.top = inPosition.top + 20; break;
-      case 'right': contentInnerSty.left = inPosition.right + 5; contentInnerSty.top = inPosition.top - rightNeg; break;
-      case 'top': contentInnerSty.left = inPosition.right + 5; contentInnerSty.top = inPosition.top - topNeg; break;
+      case 'bottom':
+        contentInnerSty.left = inPosition.right + 5;
+        contentInnerSty.top = inPosition.top + 20;
+        break;
+      case 'right':
+        contentInnerSty.left = inPosition.right + 5;
+        contentInnerSty.top = inPosition.top - rightNeg;
+        break;
+      case 'top':
+        contentInnerSty.left = inPosition.right + 5;
+        contentInnerSty.top = inPosition.top - topNeg;
+        break;
+      default: break;
     }
-  }
-  else contentInnerSty.display = 'none';
-  let displayContent = {__html: contentHtml};
+  } else contentInnerSty.display = 'none';
+  const displayContent = { __html: contentHtml };
   return (
     <div id="contentOuterSty" style={contentOuterSty}>
       <div id="contentInnerSty" style={contentInnerSty}>
@@ -69,36 +85,54 @@ function Contents({tooltipActive, place, position, data}) {
       </div>
     </div>
   );
-}
+};
+
+Contents.propTypes = {
+  tooltipActive: PropTypes.bool,
+  place: PropTypes.string,
+  position: PropTypes.object,
+  data: PropTypes.string,
+};
 
 class JTooltip extends React.Component {
-  state = {tooltipActive: false, position: {}};
+  state = { tooltipActive: false, position: {} };
   onMouseEnter = () => {
-    let rect = this.TooltipRef.getBoundingClientRect();
-    let position = {};
+    const rect = this.TooltipRef.getBoundingClientRect();
+    const position = {};
     position.left = rect.left - this.props.adjust.left;
     position.top = rect.top - this.props.adjust.top;
     position.right = rect.right - this.props.adjust.left;
     position.bottom = rect.bottom - this.props.adjust.top;
-    this.setState({tooltipActive: true, position});
+    this.setState({ tooltipActive: true, position });
   };
-  onMouseLeave = () => { this.setState({tooltipActive: false}); };
+  onMouseLeave = () => {
+    this.setState({ tooltipActive: false });
+  };
   render() {
-    let help = '?';
-    return(
-      <div id="TooltipSty" ref={(ref) => { this.TooltipRef = ref; }} style={TooltipSty} >
+    const help = '?';
+    return (
+      <div
+        id="TooltipSty"
+        ref={(ref) => {
+          this.TooltipRef = ref;
+        }}
+        style={TooltipSty}
+      >
         <div id="events" onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-          <div id="helpTip" style={helpTip}>{help}</div>
+          <div id="helpTip" style={helpTip}>
+            {help}
+          </div>
         </div>
-        <Contents
-          tooltipActive={this.state.tooltipActive}
-          place={this.props.place}
-          position={this.state.position}
-          data={this.props.data}
-        />
+        <Contents tooltipActive={this.state.tooltipActive} place={this.props.place} position={this.state.position} data={this.props.data} />
       </div>
     );
   }
 }
+
+JTooltip.propTypes = {
+  adjust: PropTypes.object,
+  data: PropTypes.string,
+  place: PropTypes.string,
+};
 
 module.exports = JTooltip;

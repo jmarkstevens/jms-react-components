@@ -1,4 +1,3 @@
-'use strict';
 
 module.exports = {
   JButton: require('./components/Button/jButton'),
@@ -14,5 +13,5 @@ module.exports = {
   JSlider: require('./components/Sliders/jSlider'),
   JTooltip: require('./components/Tooltip/jTooltip'),
   JTreeView: require('./components/TreeViews/jTreeView'),
-  JTreeViewB: require('./components/TreeViews/jTreeViewB')
+  JTreeViewB: require('./components/TreeViews/jTreeViewB'),
 };
